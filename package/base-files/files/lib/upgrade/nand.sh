@@ -78,6 +78,7 @@ identify_if_gzip() {
 
 nand_restore_config() {
 	local ubidev=$( nand_find_ubi "${CI_ROOT_UBIPART:-$CI_UBIPART}" )
+	sleep 3
 	local ubivol="$( nand_find_volume $ubidev rootfs_data )"
 	if [ ! "$ubivol" ]; then
 		ubivol="$( nand_find_volume $ubidev "$CI_ROOTPART" )"
@@ -92,7 +93,10 @@ nand_restore_config() {
 		rmdir /tmp/new_root
 		return 1
 	fi
+	sleep 2
 	if mv "$1" "/tmp/new_root/$BACKUP_FILE"; then
+		sleep 1
+		sync
 		if umount /tmp/new_root; then
 			echo "configuration saved"
 			rmdir /tmp/new_root
